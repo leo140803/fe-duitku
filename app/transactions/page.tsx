@@ -593,7 +593,7 @@ export default function TransactionsPage() {
               </svg>
               Filters
               {hasActiveFilters && (
-                <Badge variant="default" className="text-xs">
+                <Badge variant="primary" className="text-xs">
                   {Object.values(filters).filter(v => v !== "").length} Active
                 </Badge>
               )}
@@ -742,7 +742,7 @@ export default function TransactionsPage() {
                 {hasActiveFilters ? "Filtered Statistics" : "Overall Statistics"}
               </h3>
               {hasActiveFilters && (
-                <Badge variant="default" className="text-xs">
+                <Badge variant="primary" className="text-xs">
                   Showing {filteredTransactions.length} of {transactions.length} transactions
                 </Badge>
               )}
@@ -755,7 +755,7 @@ export default function TransactionsPage() {
                 <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {filteredTransactions.length}
                 </p>
-                <Badge variant="default" className="mt-2">
+                <Badge variant="primary" className="mt-2">
                   {hasActiveFilters ? `${filteredTransactions.length} Filtered` : `${transactions.length} Total`}
                 </Badge>
               </div>
@@ -820,7 +820,7 @@ export default function TransactionsPage() {
             Transaction History
             {dataLoading && <LoadingSpinner size="sm" />}
             {hasActiveFilters && !dataLoading && (
-              <Badge variant="default" className="text-xs">
+              <Badge variant="primary" className="text-xs">
                 Filtered Results
               </Badge>
             )}
@@ -971,7 +971,7 @@ export default function TransactionsPage() {
                         <div className="flex justify-end gap-3 pt-2">
                           <Button 
                             type="button" 
-                            variant="default" 
+                            variant="primary" 
                             onClick={() => setEditingId(null)}
                             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                           >

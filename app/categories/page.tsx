@@ -444,7 +444,7 @@ export default function CategoriesPage() {
                         </Button>
                         <Button 
                           type="button" 
-                          variant="default" 
+                          variant="primary" 
                           onClick={handleCancelEdit}
                           disabled={loading}
                           className="flex items-center justify-center gap-2 flex-1 sm:flex-none"
@@ -479,7 +479,7 @@ export default function CategoriesPage() {
                       <div className="flex gap-2 flex-shrink-0">
                         <Button 
                           size="sm" 
-                          variant="default" 
+                          variant="primary" 
                           onClick={() => handleStartEdit(category)}
                           disabled={loading}
                           className="flex items-center gap-1.5 px-3 py-1.5"
