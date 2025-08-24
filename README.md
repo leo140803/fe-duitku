@@ -25,13 +25,13 @@ With Duitku, you can monitor income, expenses, accounts, and spending trends—a
 ![Analytics](./public/images/screenshots/Dashboard2.png)
 
 ### 🗂️ Categories
-![Categories](./public/images/screenshots/Categories.png)
+![Categories](./public/images/screenshots/Category.png)
 
 ### 🏦 Accounts
-![Accounts](./public/images/screenshots/Accounts.png)
+![Accounts](./public/images/screenshots/Account.png)
 
 ### 🧾 Transactions
-![Transactions](./public/images/screenshots/Transactions.png)
+![Transactions](./public/images/screenshots/Transaction.png)
 
 ---
 
