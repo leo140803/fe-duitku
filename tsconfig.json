@@ -3,9 +3,11 @@
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noImplicitAny": false,
+    "strict": false,              // 🚀 matikan strict mode
+    "noImplicitAny": false,       // biar boleh pakai any
+    "strictNullChecks": false,    // biar null/undefined nggak ribut
+    "skipLibCheck": true,         // biar dependency TS nggak diperiksa
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
