@@ -152,11 +152,11 @@ export function LoadingSpinner({ size = "default", className = "" }: { size?: "s
 
 export function Alert({ 
     children, 
-    type = "info",
+    type = "default",
     className = "" 
 }: { 
     children: React.ReactNode; 
-    type?: "info" | "success" | "warning" | "error";
+    type?: "default" | "success" | "warning" | "error";
     className?: string;
 }) {
     const baseClasses = "p-4 rounded-lg border";

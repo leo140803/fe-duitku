@@ -330,7 +330,7 @@ export default function HomePage() {
                       maximumFractionDigits: 0
                     }).format(netBalance)}
                   </p>
-                  <Badge variant={netBalance >= 0 ? "info" : "warning"} className="mt-2 text-xs">
+                  <Badge variant={netBalance >= 0 ? "default" : "warning"} className="mt-2 text-xs">
                     {netBalance >= 0 ? 'Surplus' : 'Deficit'}
                   </Badge>
                 </Card>
@@ -341,7 +341,7 @@ export default function HomePage() {
                   <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
                     {accounts.length}
                   </p>
-                  <Badge variant="info" className="mt-2 text-xs">
+                  <Badge variant="default" className="mt-2 text-xs">
                     {categories.length} categories
                   </Badge>
                 </Card>
@@ -492,7 +492,7 @@ export default function HomePage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Recent Transactions
-                  <Badge variant="info" className="text-xs">{recentTransactions.length}</Badge>
+                  <Badge variant="default" className="text-xs">{recentTransactions.length}</Badge>
                 </h3>
                 <div className="space-y-2">
                   {recentTransactions.length === 0 ? (
