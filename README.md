@@ -18,32 +18,29 @@ With Duitku, you can monitor income, expenses, accounts, and spending trends—a
 
 ## 🖼️ Screenshots
 
-### 🔐 Authentication (Sign In & Sign Up)
-![Login Page](./Screenshot%202025-08-24%20at%2023.34.54.png)
+### 📊 Dashboard
+![Dashboard](./public/images/screenshots/Dashboard1.png)
 
-### 📊 Main Dashboard
-![Dashboard](./Screenshot%202025-08-24%20at%2023.35.30.png)
+### 📈 Analytics
+![Analytics](./public/images/screenshots/Dashboard2.png)
 
-### 📈 Financial Analytics
-![Analytics](./Screenshot%202025-08-24%20at%2023.35.47.png)
+### 🗂️ Categories
+![Categories](./public/images/screenshots/Categories.png)
 
-### 🗂️ Categories Management
-![Categories](./Screenshot%202025-08-24%20at%2023.36.06.png)
+### 🏦 Accounts
+![Accounts](./public/images/screenshots/Accounts.png)
 
-### 🏦 Account Management
-![Accounts](./Screenshot%202025-08-24%20at%2023.36.36.png)
-
-### 🧾 Transaction History
-![Transactions](./Screenshot%202025-08-24%20at%2023.37.24.png)
+### 🧾 Transactions
+![Transactions](./public/images/screenshots/Transactions.png)
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React.js / Next.js *(adjust based on your implementation)*  
+- **Frontend**: Next.Js 
+- **Backend**: Go (https://github.com/leo140803/fe-duitku.git)
 - **Styling**: TailwindCSS  
-- **Database**: Firebase / Supabase / MongoDB *(choose the one you used)*  
-- **Authentication**: Firebase Auth / NextAuth *(or other solution)*  
+- **Database**: Supabase
 
 ---
 
@@ -52,7 +49,7 @@ With Duitku, you can monitor income, expenses, accounts, and spending trends—a
 Clone the repository and run it locally:
 
 ```bash
-git clone https://github.com/username/duitku-dashboard.git
+git clone https://github.com/leo140803/fe-duitku.git
 cd duitku-dashboard
 npm install
 npm run dev
