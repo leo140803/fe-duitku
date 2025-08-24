@@ -38,7 +38,7 @@ With Duitku, you can monitor income, expenses, accounts, and spending trends—a
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.Js 
-- **Backend**: Go (https://github.com/leo140803/fe-duitku.git)
+- **Backend**: Go (https://github.com/leo140803/be-duitku.git)
 - **Styling**: TailwindCSS  
 - **Database**: Supabase
 
