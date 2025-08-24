@@ -434,7 +434,7 @@ export default function TransactionsPage() {
          {/* Export Button */}
          {!dataLoading && transactions.length > 0 && (
           <div className="flex justify-end">
-              <Button variant="primary" size="sm" onClick={exportToExcel} className="flex items-center gap-1">
+              <Button variant="default" size="sm" onClick={exportToExcel} className="flex items-center gap-1">
                 📤 Export to Excel
               </Button>
             </div>
@@ -593,7 +593,7 @@ export default function TransactionsPage() {
               </svg>
               Filters
               {hasActiveFilters && (
-                <Badge variant="primary" className="text-xs">
+                <Badge variant="default" className="text-xs">
                   {Object.values(filters).filter(v => v !== "").length} Active
                 </Badge>
               )}
@@ -742,7 +742,7 @@ export default function TransactionsPage() {
                 {hasActiveFilters ? "Filtered Statistics" : "Overall Statistics"}
               </h3>
               {hasActiveFilters && (
-                <Badge variant="primary" className="text-xs">
+                <Badge variant="default" className="text-xs">
                   Showing {filteredTransactions.length} of {transactions.length} transactions
                 </Badge>
               )}
@@ -755,7 +755,7 @@ export default function TransactionsPage() {
                 <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {filteredTransactions.length}
                 </p>
-                <Badge variant="primary" className="mt-2">
+                <Badge variant="default" className="mt-2">
                   {hasActiveFilters ? `${filteredTransactions.length} Filtered` : `${transactions.length} Total`}
                 </Badge>
               </div>
@@ -820,7 +820,7 @@ export default function TransactionsPage() {
             Transaction History
             {dataLoading && <LoadingSpinner size="sm" />}
             {hasActiveFilters && !dataLoading && (
-              <Badge variant="primary" className="text-xs">
+              <Badge variant="default" className="text-xs">
                 Filtered Results
               </Badge>
             )}
@@ -872,7 +872,7 @@ export default function TransactionsPage() {
                     Showing <strong>{sortedTransactions.length}</strong> of <strong>{transactions.length}</strong> transactions
                   </div>
                   <Button
-                    variant="primary"
+                    variant="default"
                     size="sm"
                     onClick={clearFilters}
                     className="text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-800/30"
@@ -971,7 +971,7 @@ export default function TransactionsPage() {
                         <div className="flex justify-end gap-3 pt-2">
                           <Button 
                             type="button" 
-                            variant="primary" 
+                            variant="default" 
                             onClick={() => setEditingId(null)}
                             className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                           >

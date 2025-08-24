@@ -48,14 +48,14 @@ export function Subtitle({ children, className = "" }: { children: React.ReactNo
 
 export function Button({ 
     children, 
-    variant = "primary", 
+    variant = "default", 
     size = "default",
     className = "", 
     loading = false,
     ...props 
 }: { 
     children: React.ReactNode; 
-    variant?: "primary" | "secondary" | "outline" | "destructive";
+    variant?: "default" | "secondary" | "outline" | "destructive";
     size?: "sm" | "default" | "lg";
     className?: string;
     loading?: boolean;
