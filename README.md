@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 Duitku Dashboard
 
-## Getting Started
+**Duitku** is a **personal financial manager web application** that helps you take control of your money with powerful analytics, smart categorization, and easy-to-use dashboards.  
+With Duitku, you can monitor income, expenses, accounts, and spending trends—all in one place.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- 📊 **Analytics Dashboard** – Get real-time insights into your finances.
+- 🍽️ **Smart Categories** – Organize expenses by categories (e.g., Food, Transportation, Entertainment).
+- 📅 **Trends & Activity Tracking** – Visualize monthly trends and weekly activities.
+- 🏦 **Account Management** – Add multiple bank/cash accounts and track balances.
+- 🗂️ **Custom Categories** – Create your own expense/income categories.
+- 🔎 **Transaction History & Filters** – Browse transaction history with quick filters (last 7 days, last 30 days, income only, expenses only).
+
+---
+
+## 🖼️ Screenshots
+
+### 🔐 Authentication (Sign In & Sign Up)
+![Login Page](./Screenshot%202025-08-24%20at%2023.34.54.png)
+
+### 📊 Main Dashboard
+![Dashboard](./Screenshot%202025-08-24%20at%2023.35.30.png)
+
+### 📈 Financial Analytics
+![Analytics](./Screenshot%202025-08-24%20at%2023.35.47.png)
+
+### 🗂️ Categories Management
+![Categories](./Screenshot%202025-08-24%20at%2023.36.06.png)
+
+### 🏦 Account Management
+![Accounts](./Screenshot%202025-08-24%20at%2023.36.36.png)
+
+### 🧾 Transaction History
+![Transactions](./Screenshot%202025-08-24%20at%2023.37.24.png)
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React.js / Next.js *(adjust based on your implementation)*  
+- **Styling**: TailwindCSS  
+- **Database**: Firebase / Supabase / MongoDB *(choose the one you used)*  
+- **Authentication**: Firebase Auth / NextAuth *(or other solution)*  
+
+---
+
+## 📦 Installation
+
+Clone the repository and run it locally:
 
 ```bash
+git clone https://github.com/username/duitku-dashboard.git
+cd duitku-dashboard
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
