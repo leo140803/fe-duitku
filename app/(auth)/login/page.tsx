@@ -56,7 +56,7 @@ export default function LoginPage() {
 
         <Card>
           {error && (
-            <Alert type="error" className="mb-6">
+            <Alert type="secondary" className="mb-6">
               {error}
             </Alert>
           )}

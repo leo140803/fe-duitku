@@ -314,7 +314,7 @@ export default function HomePage() {
                       maximumFractionDigits: 0
                     }).format(totalExpense)}
                   </p>
-                  <Badge variant="error" className="mt-2 text-xs">
+                  <Badge variant="secondary" className="mt-2 text-xs">
                     {transactions.filter(t => t.type === "EXPENSE").length} transactions
                   </Badge>
                 </Card>

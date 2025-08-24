@@ -51,7 +51,7 @@ const AccountStatusBadge = ({ balance }: { balance: number }) => {
   } else if (balance >= 0) {
     return <Badge variant="warning" className="text-xs">Low Balance</Badge>;
   } else {
-    return <Badge variant="error" className="text-xs">Overdraft</Badge>;
+    return <Badge variant="secondary" className="text-xs">Overdraft</Badge>;
   }
 };
 
@@ -196,7 +196,7 @@ export default function AccountsPage() {
           </form>
 
           {error && (
-            <Alert type="error" className="mt-4 flex items-center gap-2">
+            <Alert type="secondary" className="mt-4 flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -300,7 +300,7 @@ export default function AccountsPage() {
                     maximumFractionDigits: 0
                   }).format(totalBalance)}
                 </p>
-                <Badge variant={totalBalance >= 0 ? "success" : "error"} className="mt-2">
+                <Badge variant={totalBalance >= 0 ? "success" : "secondary"} className="mt-2">
                   {totalBalance >= 0 ? 'Positive Balance' : 'Negative Balance'}
                 </Badge>
               </div>

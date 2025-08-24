@@ -111,7 +111,7 @@ export function Badge({
     className = "" 
 }: { 
     children: React.ReactNode; 
-    variant?: "default" | "success" | "warning" | "error";
+    variant?: "default" | "success" | "warning" | "secondary";
     className?: string;
 }) {
     const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
@@ -156,7 +156,7 @@ export function Alert({
     className = "" 
 }: { 
     children: React.ReactNode; 
-    type?: "default" | "success" | "warning" | "error";
+    type?: "default" | "success" | "warning" | "secondary";
     className?: string;
 }) {
     const baseClasses = "p-4 rounded-lg border";
