@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import Protected from "@/components/Protected";
 import { useAuth } from "@/hooks/useAuth";
-import { apiGet, apiPost } from "@/lib/api";
+import { apiGet, apiPost, apiPut, apiDelete, } from "@/lib/api";
 import { Card, Field, Title, Button, Input, Alert, Badge } from "@/components/UI";
+import * as XLSX from "xlsx";
 
 interface Transaction { 
   id: string; 
@@ -102,6 +103,8 @@ const getTransactionIcon = (transaction: Transaction) => {
   }
 };
 
+
+
 // Get category icon
 const getCategoryIcon = (categoryName?: string) => {
   if (!categoryName) return "📂";
@@ -142,6 +145,53 @@ export default function TransactionsPage() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState<"INCOME" | "EXPENSE">("EXPENSE");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Transaction>>({});
+  
+  async function onUpdate(id: string) {
+    if (!session) return;
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+  
+    try {
+      await apiPut(`/transactions/${id}`, {
+        ...editForm,
+        amount: Number(editForm.amount),
+      }, session.access_token);
+  
+      setSuccessMessage("Transaction updated successfully!");
+      await loadData();
+      setEditingId(null);
+      setEditForm({});
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to update transaction");
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  async function onDelete(id: string, description?: string) {
+    if (!session) return;
+  
+    if (!confirm(`Are you sure you want to delete transaction "${description || id}" ?`)) return;
+  
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+  
+    try {
+      await apiDelete(`/transactions/${id}`, session.access_token);
+      setSuccessMessage("Transaction deleted successfully!");
+      await loadData();
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err?.message ?? "Failed to delete transaction");
+    } finally {
+      setLoading(false);
+    }
+  }
   
   // Filter states
   const [filters, setFilters] = useState<TransactionFilters>({
@@ -201,6 +251,26 @@ export default function TransactionsPage() {
     
     return true;
   });
+
+  const exportToExcel = () => {
+    // Data yang diekspor: gunakan filteredTransactions agar sesuai dengan filter aktif
+    const data = filteredTransactions.map((t) => ({
+      Date: new Date(t.date).toLocaleDateString(),
+      Description: t.description || "No description",
+      Account: getAccountName(t.account_id),
+      Category: getCategoryName(t.category_id),
+      Type: t.type,
+      Amount: t.amount,
+    }));
+  
+    // Buat worksheet dan workbook
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+  
+    // Simpan sebagai file Excel
+    XLSX.writeFile(wb, "transactions.xlsx");
+  };
 
   // Calculate stats for filtered data
   const filteredTotalIncome = filteredTransactions
@@ -360,6 +430,16 @@ export default function TransactionsPage() {
             Track your income and expenses with detailed records
           </p>
         </div>
+
+         {/* Export Button */}
+         {!dataLoading && transactions.length > 0 && (
+          <div className="flex justify-end">
+              <Button variant="primary" size="sm" onClick={exportToExcel} className="flex items-center gap-1">
+                📤 Export to Excel
+              </Button>
+            </div>
+          )}
+
 
         {/* Success Message */}
         {successMessage && (
@@ -805,53 +885,188 @@ export default function TransactionsPage() {
               {sortedTransactions.map((transaction) => (
                 <div 
                   key={transaction.id} 
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 overflow-hidden"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-lg">{getTransactionIcon(transaction)}</span>
-                        <h3 className="font-medium text-gray-800 dark:text-gray-200">
-                          {transaction.description || "No description"}
-                        </h3>
-                        <Badge variant={transaction.type === "INCOME" ? "success" : "error"} className="text-xs">
-                          {transaction.type}
-                        </Badge>
-                        <TransactionStatusBadge transaction={transaction} />
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          {new Date(transaction.date).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                          </svg>
-                          {getAccountName(transaction.account_id)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="text-xs">{getCategoryIcon(getCategoryName(transaction.category_id))}</span>
-                          {getCategoryName(transaction.category_id)}
-                        </span>
+                  {editingId === transaction.id ? (
+                    <div className="p-6">
+                      <form
+                        onSubmit={(e) => { e.preventDefault(); onUpdate(transaction.id); }}
+                        className="space-y-4"
+                      >
+                        {/* Account & Category Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Field label="Account">
+                            <select
+                              className="input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              value={editForm.account_id || transaction.account_id}
+                              onChange={(e) => setEditForm({ ...editForm, account_id: e.target.value })}
+                              required
+                            >
+                              <option value="">Select account</option>
+                              {accounts.map((acc) => (
+                                <option key={acc.id} value={acc.id}>{acc.name}</option>
+                              ))}
+                            </select>
+                          </Field>
+
+                          <Field label="Category">
+                            <select
+                              className="input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              value={editForm.category_id || transaction.category_id || ""}
+                              onChange={(e) => setEditForm({ ...editForm, category_id: e.target.value })}
+                            >
+                              <option value="">Uncategorized</option>
+                              {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                              ))}
+                            </select>
+                          </Field>
+                        </div>
+
+                        {/* Date, Amount & Type Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <Field label="Date">
+                            <Input
+                              type="date"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              value={editForm.date || transaction.date}
+                              onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                              required
+                            />
+                          </Field>
+                          <Field label="Amount">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              value={editForm.amount ?? transaction.amount}
+                              onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
+                              required
+                            />
+                          </Field>
+                          <Field label="Type">
+                            <select
+                              className="input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              value={editForm.type || transaction.type}
+                              onChange={(e) => setEditForm({ ...editForm, type: e.target.value as "INCOME" | "EXPENSE" })}
+                              required
+                            >
+                              <option value="EXPENSE">Expense</option>
+                              <option value="INCOME">Income</option>
+                            </select>
+                          </Field>
+                        </div>
+
+                        {/* Description */}
+                        <Field label="Description">
+                          <Input
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            value={editForm.description ?? transaction.description ?? ""}
+                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                            placeholder="Enter transaction description..."
+                          />
+                        </Field>
+
+                        {/* Action Buttons */}
+                        <div className="flex justify-end gap-3 pt-2">
+                          <Button 
+                            type="button" 
+                            variant="default" 
+                            onClick={() => setEditingId(null)}
+                            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                          >
+                            Cancel
+                          </Button>
+                          <Button 
+                            type="submit" 
+                            loading={loading}
+                            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                          >
+                            Save Changes
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="p-6">
+                      <div className="flex items-start justify-between gap-4">
+                        {/* Left Content */}
+                        <div className="flex-1 min-w-0">
+                          {/* Main Info Row */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="text-2xl flex-shrink-0">{getTransactionIcon(transaction)}</span>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-lg leading-tight">
+                                {transaction.description || "No description"}
+                              </h3>
+                              <div className="flex items-center gap-2 mt-1">
+                                <Badge 
+                                  variant={transaction.type === "INCOME" ? "success" : "error"} 
+                                  className="text-xs font-medium px-2 py-1"
+                                >
+                                  {transaction.type}
+                                </Badge>
+                                <TransactionStatusBadge transaction={transaction} />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Details Row */}
+                          <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span>{new Date(transaction.date).toLocaleDateString()}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                              </svg>
+                              <span className="truncate">{getAccountName(transaction.account_id)}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>{getCategoryIcon(getCategoryName(transaction.category_id))}</span>
+                              <span className="truncate">{getCategoryName(transaction.category_id)}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Content */}
+                        <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                          {/* Amount */}
+                          <div className={`text-2xl font-bold ${
+                            transaction.type === "INCOME" 
+                              ? 'text-emerald-600 dark:text-emerald-400' 
+                              : 'text-red-600 dark:text-red-400'
+                          }`}>
+                            {transaction.type === "INCOME" ? "+" : "-"}
+                            {new Intl.NumberFormat('id-ID', {
+                              style: 'currency', 
+                              currency: 'IDR',
+                              minimumFractionDigits: 0, 
+                              maximumFractionDigits: 0
+                            }).format(transaction.amount)}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="error"
+                              onClick={() => onDelete(transaction.id, transaction.description)}
+                              className="px-3 py-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md transition-colors text-sm font-medium"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className={`text-lg font-semibold ${transaction.type === "INCOME" ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                        {transaction.type === "INCOME" ? "+" : "-"}
-                        {new Intl.NumberFormat('id-ID', {
-                          style: 'currency',
-                          currency: 'IDR',
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0
-                        }).format(transaction.amount)}
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               ))}
+
 
               {/* Load more indicator if showing filtered results */}
               {hasActiveFilters && sortedTransactions.length > 0 && (

@@ -34,3 +34,29 @@ export async function apiPost<T>(
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+export async function apiPut<T>(
+  path: string,
+  body: unknown,
+  token?: string
+): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "PUT",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function apiDelete(
+  path: string,
+  token?: string
+): Promise<void> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+

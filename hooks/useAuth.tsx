@@ -10,23 +10,28 @@ export type Session = {
 
 type AuthContextType = {
   session: Session | null;
+  loading: boolean;
   login: (s: Session) => void;
   logout: () => void;
 };
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const raw = localStorage.getItem("session");
     if (raw) setSession(JSON.parse(raw));
+    setLoading(false); // selesai cek
   }, []);
 
   const api = useMemo(
     () => ({
       session,
+      loading,
       login: (s: Session) => {
         setSession(s);
         localStorage.setItem("session", JSON.stringify(s));
@@ -36,11 +41,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem("session");
       },
     }),
-    [session]
+    [session, loading]
   );
 
   return <AuthContext.Provider value={api}>{children}</AuthContext.Provider>;
 }
+
 
 export function useAuth() {
   const ctx = useContext(AuthContext);

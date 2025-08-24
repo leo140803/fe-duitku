@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export function Card({ children, className = "", ...props }: { children: React.ReactNode; className?: string; [key: string]: any }) {
     return (
@@ -174,86 +175,240 @@ export function Alert({
     );
 }
 
+
+
 export function Navigation() {
     const { session, logout } = useAuth();
-
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const router = useRouter();
+  
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        
+        // Jangan tutup menu jika yang diklik adalah link navigasi
+        if (target.closest('a[href]')) {
+          return;
+        }
+        
+        if (!target.closest('.user-menu') && !target.closest('.mobile-menu-container')) {
+          setIsUserMenuOpen(false);
+          setIsMobileMenuOpen(false);
+        }
+      };
+  
+      if (isMobileMenuOpen || isUserMenuOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isMobileMenuOpen, isUserMenuOpen]);
+  
+    // ✅ Return null setelah semua hooks dipanggil
     if (!session) return null;
 
-    const navItems = [
-        { href: "/", label: "Dashboard", icon: "🏠" },
-        { href: "/categories", label: "Categories", icon: "📊" },
-        { href: "/accounts", label: "Accounts", icon: "🏦" },
-        { href: "/transactions", label: "Transactions", icon: "💰" }
+    const navigationItems = [
+      {
+        label: 'Dashboard',
+        href: '/',
+        icon: (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+        )
+      },
+      {
+        label: 'Transactions',
+        href: '/transactions',
+        icon: (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          </svg>
+        )
+      },
+      {
+        label: 'Categories',
+        href: '/categories',
+        icon: (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          </svg>
+        )
+      },
+      {
+        label: 'Accounts',
+        href: '/accounts',
+        icon: (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        )
+      }
     ];
 
+    const toggleMobileMenu = () => {
+      setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    const toggleUserMenu = () => {
+      setIsUserMenuOpen(!isUserMenuOpen);
+    };
+
+    // Handler untuk mobile menu item click
+    const handleMobileMenuClick = (href: string) => {
+      // Tutup menu terlebih dahulu
+      setIsMobileMenuOpen(false);
+      
+      // Delay sedikit untuk memastikan menu tertutup, lalu navigate
+      setTimeout(() => {
+        router.push(href);
+      }, 100);
+    };
+
     return (
-        <nav className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    {/* Logo */}
-                    <div className="flex items-center">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">D</span>
-                            </div>
-                            <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                Duitku
-                            </span>
-                        </Link>
-                    </div>
+      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 backdrop-blur-sm bg-white/95 dark:bg-gray-900/95 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo and Brand */}
+            <Link href="/" className="flex items-center group">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg mr-3 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                💳
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Duitku
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
+                  Financial Manager
+                </span>
+              </div>
+            </Link>
 
-                    {/* Navigation Links */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                            >
-                                <span>{item.icon}</span>
-                                <span>{item.label}</span>
-                            </Link>
-                        ))}
-                    </div>
+            {/* Desktop Navigation */}
+            {session && (
+              <div className="hidden md:flex items-center space-x-1">
+                {navigationItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200 group"
+                  >
+                    <span className="group-hover:scale-110 transition-transform duration-200">
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
 
-                    {/* User Menu */}
-                    <div className="flex items-center space-x-4">
-                        <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                            <span>Welcome,</span>
-                            <span className="font-medium text-gray-800 dark:text-gray-200">
-                                {session.email}
-                            </span>
+            {/* Right side - Actions and User Menu */}
+            <div className="flex items-center space-x-3">
+              {session ? (
+                <>
+                  {/* User Menu */}
+                  <div className="relative user-menu">
+                    <button
+                      onClick={toggleUserMenu}
+                      className="flex items-center gap-3 p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 group"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                        {session.email?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="hidden md:block text-left">
+                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          {session.email?.split('@')[0]}
                         </div>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={logout}
-                            className="flex items-center space-x-2"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                            <span>Sign Out</span>
-                        </Button>
-                    </div>
-                </div>
-            </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                          {session.email}
+                        </div>
+                      </div>
+                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
 
-            {/* Mobile Navigation */}
-            <div className="md:hidden border-t border-gray-200 dark:border-gray-700">
-                <div className="px-2 pt-2 pb-3 space-y-1">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className="flex items-center space-x-3 px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                    {/* User Dropdown Menu */}
+                    {isUserMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2 z-50 animate-in slide-in-from-top-2 duration-200">
+                        <div className="md:hidden px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {session.email?.split('@')[0]}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
+                            {session.email}
+                          </div>
+                        </div>
+                        <button 
+                          onClick={logout}
+                          className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
                         >
-                            <span>{item.icon}</span>
-                            <span>{item.label}</span>
-                        </Link>
-                    ))}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          Sign Out
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mobile menu button */}
+                  <button
+                    onClick={toggleMobileMenu}
+                    className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 mobile-menu-button"
+                  >
+                    {isMobileMenuOpen ? (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                    )}
+                  </button>
+                </>
+              ) : (
+                /* Guest Actions */
+                <div className="flex items-center space-x-3">
+                  <Link href="/login">
+                    <Button variant="outline" className="hidden sm:inline-flex hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all duration-200">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300">
+                      Get Started
+                    </Button>
+                  </Link>
                 </div>
+              )}
             </div>
-        </nav>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && session && (
+          <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg animate-in slide-in-from-top-2 duration-300 mobile-menu-container">
+            <div className="px-4 pt-4 pb-6 space-y-2">
+              {navigationItems.map((item) => (
+                <button
+                  key={item.href}
+                  onClick={() => handleMobileMenuClick(item.href)}
+                  className="flex items-center gap-4 w-full px-4 py-4 text-base font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200 group text-left"
+                >
+                  <span className="group-hover:scale-110 transition-transform duration-200">
+                    {item.icon}
+                  </span>
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
     );
 }
