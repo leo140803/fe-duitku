@@ -155,9 +155,15 @@ export default function TransactionsPage() {
     setSuccessMessage(null);
   
     try {
+      const tx = transactions.find(t => t.id === id); // ambil transaksi lama
+  
       await apiPut(`/transactions/${id}`, {
-        ...editForm,
-        amount: Number(editForm.amount),
+        account_id: editForm.account_id || tx?.account_id,
+        category_id: editForm.category_id ?? tx?.category_id,
+        date: editForm.date || tx?.date,   // <-- fallback ke tanggal lama
+        description: editForm.description ?? tx?.description,
+        amount: Number(editForm.amount ?? tx?.amount),
+        type: editForm.type || tx?.type,
       }, session.access_token);
   
       setSuccessMessage("Transaction updated successfully!");
@@ -171,6 +177,7 @@ export default function TransactionsPage() {
       setLoading(false);
     }
   }
+  
   
   async function onDelete(id: string, description?: string) {
     if (!session) return;
@@ -925,15 +932,15 @@ export default function TransactionsPage() {
 
                         {/* Date, Amount & Type Row */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <Field label="Date">
-                            <Input
-                              type="date"
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              value={editForm.date || transaction.date}
-                              onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                              required
-                            />
-                          </Field>
+                        <Field label="Date">
+                          <Input
+                            type="date"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                            value={editForm.date || new Date(transaction.date).toISOString().split('T')[0]}
+                            onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
+                            required
+                          />
+                        </Field>
                           <Field label="Amount">
                             <Input
                               type="number"
@@ -1051,6 +1058,14 @@ export default function TransactionsPage() {
 
                           {/* Action Buttons */}
                           <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => setEditingId(transaction.id)}
+                            className="px-3 py-1.5 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md transition-colors text-sm font-medium"
+                          >
+                            Edit
+                          </Button>
                             <Button
                               size="sm"
                               variant="secondary"
